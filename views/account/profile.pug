@@ -15,6 +15,11 @@ block content
       .col-md-7
         input.form-control(type='text', name='name', id='name', value=user.profile.name, autocomplete='name')
     .form-group.row
+      label.col-md-3.col-form-label.font-weight-bold.text-right(for='nickname') NickName
+      .col-md-7
+        input.form-control(type='text', name='nickname', id='nickname', value=user.profile.nickname, autocomplete='name')
+
+    .form-group.row
       label.col-md-3.col-form-label.font-weight-bold.text-right Gender
       .col-sm-6
         label.radio.col-sm-3
