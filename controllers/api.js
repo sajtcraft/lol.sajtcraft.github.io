@@ -348,13 +348,13 @@ exports.getSteam = async (req, res, next) => {
       });
   };
   try {
-    const playerAchievements = await getPlayerAchievements();
+    const { playerstats } = await getPlayerAchievements();
     const playerSummaries = await getPlayerSummaries();
     const ownedGames = await getOwnedGames();
     res.render('api/steam', {
       title: 'Steam Web API',
       ownedGames: ownedGames.response,
-      playerAchievemments: playerAchievements ? playerAchievements.playerstats : null,
+      playerAchievemments: playerstats.success ? playerstats : null,
       playerSummary: playerSummaries.response.players[0]
     });
   } catch (err) {
@@ -471,6 +471,37 @@ exports.getLinkedin = (req, res, next) => {
       profile: $in
     });
   });
+};
+
+/**
+ * GET /api/chart
+ * Chart example.
+ */
+exports.getChart = async (req, res, next) => {
+  const url = `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=MSFT&outputsize=compact&apikey=${process.env.ALPHA_VANTAGE_KEY}`;
+  axios.get(url)
+    .then((response) => {
+      const arr = response.data['Time Series (Daily)'];
+      let dates = [];
+      let closing = []; // stock closing value
+      const keys = Object.getOwnPropertyNames(arr);
+      for (let i = 0; i < 100; i++) {
+        dates.push(keys[i]);
+        closing.push(arr[keys[i]]['4. close']);
+      }
+      // reverse so dates appear from left to right
+      dates.reverse();
+      closing.reverse();
+      dates = JSON.stringify(dates);
+      closing = JSON.stringify(closing);
+      res.render('api/chart', {
+        title: 'Chart',
+        dates,
+        closing
+      });
+    }).catch((err) => {
+      next(err);
+    });
 };
 
 /**

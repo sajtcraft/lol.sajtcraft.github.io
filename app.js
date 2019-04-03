@@ -25,7 +25,7 @@ const upload = multer({ dest: path.join(__dirname, 'uploads') });
 /**
  * Load environment variables from .env file, where API keys and passwords are configured.
  */
-dotenv.load({ path: '.env.example' });
+dotenv.config({ path: '.env.example' });
 
 /**
  * Controllers (route handlers).
@@ -125,6 +125,7 @@ app.use((req, res, next) => {
   next();
 });
 app.use('/', express.static(path.join(__dirname, 'public'), { maxAge: 31557600000 }));
+app.use('/js/lib', express.static(path.join(__dirname, 'node_modules/chart.js/dist'), { maxAge: 31557600000 }));
 app.use('/js/lib', express.static(path.join(__dirname, 'node_modules/popper.js/dist/umd'), { maxAge: 31557600000 }));
 app.use('/js/lib', express.static(path.join(__dirname, 'node_modules/bootstrap/dist/js'), { maxAge: 31557600000 }));
 app.use('/js/lib', express.static(path.join(__dirname, 'node_modules/jquery/dist'), { maxAge: 31557600000 }));
@@ -184,6 +185,7 @@ app.post('/api/upload', upload.single('myFile'), apiController.postFileUpload);
 app.get('/api/pinterest', passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.getPinterest);
 app.post('/api/pinterest', passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.postPinterest);
 app.get('/api/google-maps', apiController.getGoogleMaps);
+app.get('/api/chart', apiController.getChart);
 
 /**
  * OAuth authentication routes. (Sign in)
